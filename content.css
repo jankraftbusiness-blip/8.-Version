@@ -1,0 +1,329 @@
+/*
+ * content.css – Optik von Label, Ring und Detail-Panel.
+ * Jede Eigenschaft ist kommentiert. Alle Klassen beginnen mit "tx-", damit sie
+ * nicht mit den Styles der Chat-Seiten kollidieren.
+ */
+
+/* Container für Label + Ring, sitzt rechtsbündig über der Textbox */
+.tx-root {
+  --tx-surface: #262624; /* Standard-Hintergrundfarbe, content.js überschreibt sie je nach Seite */
+  --tx-foreground: #e8e6e0; /* Standard-Textfarbe, content.js überschreibt sie je nach Seite */
+  position: fixed; /* bleibt an Ort und Stelle, egal wie die Seite scrollt */
+  z-index: 2147483000; /* liegt über allen Elementen der Chat-Seite */
+  box-sizing: border-box; /* Padding zählt zur Breite dazu, die content.js setzt */
+  display: flex; /* ordnet Label und Ring nebeneinander an */
+  align-items: center; /* zentriert beide vertikal zueinander */
+  justify-content: flex-end; /* schiebt Label und Ring an den rechten Rand */
+  gap: 8px; /* Abstand zwischen Label und Ring */
+  padding: 3px 6px; /* gibt Hintergrundfläche um Anzeige und Ring */
+  background: var(--tx-surface); /* passt sich der Oberfläche der KI-Eingabe an */
+  color: var(--tx-foreground); /* kontrastierender Text auf heller und dunkler Fläche */
+  border-radius: 8px; /* weiche Ecken passend zur Eingabefläche */
+  box-shadow: none; /* kein Schatten um die schwebende Anzeige */
+  transform: none; /* verhindert, dass Seiten-Styles das Element verschieben */
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; /* neutrale Systemschrift */
+  font-size: 12px; /* kleine, unaufdringliche Schrift */
+  font-weight: 600; /* leicht fett, damit die Zahlen gut lesbar sind */
+  line-height: 1; /* verhindert zusätzliche Zeilenhöhe */
+  user-select: none; /* Zahlen sollen beim Klicken nicht markiert werden */
+}
+
+/* Gemini-Startseite: keine eigene Fläche, die Anzeige schwebt frei */
+.tx-root.tx-transparent {
+  background: transparent; /* kein Hintergrund, die Seite scheint durch */
+  box-shadow: none; /* kein Schatten ohne Fläche */
+}
+
+/* hidden-Attribut muss stärker sein als display:flex von oben */
+.tx-root[hidden],
+.tx-panel[hidden] {
+  display: none !important; /* versteckt das Element zuverlässig */
+}
+
+/* Text "Draft ~0  Chat ~1.223 / 200.000" */
+.tx-label {
+  display: flex; /* Draft und Chat in einer Zeile */
+  gap: 12px; /* Abstand zwischen Draft- und Chat-Teil */
+  color: var(--tx-foreground); /* folgt der Seite: dunkel auf hell, hell auf dunkel (vorher fest weiß) */
+  font-weight: 700; /* fett, damit die Zahlen auffallen */
+  white-space: nowrap; /* kein Zeilenumbruch im Label */
+  font-variant-numeric: tabular-nums; /* gleich breite Ziffern, damit nichts springt */
+}
+
+/* Ein Teil des Labels, also "Draft ~0" oder "Chat ~1.223 / 200.000" */
+.tx-l-draft,
+.tx-l-chat {
+  display: inline-flex; /* Name und Wert in einer Zeile */
+  gap: 4px; /* Abstand zwischen Name und Wert */
+}
+
+/* Wörter "Draft" und "Chat" */
+.tx-label .tx-label-name {
+  color: #9a9a9a; /* gedämpftes Grau, damit die Zahlen im Vordergrund stehen */
+  font-weight: 600; /* etwas leichter als die Zahlen */
+}
+
+/* Zahlen hinter den Wörtern */
+.tx-label .tx-label-value {
+  color: inherit; /* übernimmt die Farbe des Labels, wird so bei Warnung gelb oder rot */
+}
+
+/* Label wird gelb, wenn der Kontext fast voll ist */
+.tx-label.tx-warn {
+  color: #d99a3b; /* warmes Gelb-Orange als Warnfarbe */
+}
+
+/* Label wird rot, wenn der Kontext kritisch voll ist */
+.tx-label.tx-crit {
+  color: #e5584f; /* deutliches Rot für kritischen Füllstand */
+}
+
+/* Gepunkteter Ring kennzeichnet einen nicht ermittelbaren aktiven Kontext */
+.tx-ring-prog.tx-unknown {
+  stroke: #8b8b8b;
+  stroke-dasharray: 1 3;
+  stroke-dashoffset: 0;
+}
+
+/* Klickbarer Knopf, der den Ring enthält */
+.tx-ring-btn {
+  display: flex; /* SVG ohne Zeilen-Lücke einpassen */
+  align-items: center; /* SVG mittig im Knopf */
+  justify-content: center; /* SVG mittig im Knopf */
+  width: 24px; /* feste Breite des Rings */
+  height: 24px; /* feste Höhe des Rings */
+  padding: 0; /* kein Innenabstand, der Ring füllt den Knopf */
+  margin: 0; /* kein Außenabstand */
+  border: none; /* keine Umrandung des Knopfs */
+  background: transparent; /* Seitenhintergrund scheint durch */
+  cursor: pointer; /* zeigt die Klickbarkeit an */
+  border-radius: 50%; /* runder Fokus- und Hover-Bereich */
+}
+
+/* leichte Hervorhebung beim Überfahren */
+.tx-ring-btn:hover {
+  background: color-mix(in srgb, var(--tx-foreground) 14%, var(--tx-surface)); /* dezente Hervorhebung */
+}
+
+/* SVG-Grafik des Rings */
+.tx-ring {
+  width: 22px; /* Breite der Ring-Grafik */
+  height: 22px; /* Höhe der Ring-Grafik */
+  transform: rotate(-90deg); /* Fortschritt beginnt oben statt rechts */
+}
+
+/* Hintergrundkreis des Rings */
+.tx-ring-track {
+  stroke: rgba(128, 128, 128, 0.35); /* blasser Grauton als Spur */
+  stroke-width: 3; /* Dicke der Spur */
+}
+
+/* Fortschrittskreis des Rings */
+.tx-ring-prog {
+  stroke: #4b8bf5; /* Blau wie im Entwurf */
+  stroke-width: 3; /* gleiche Dicke wie die Spur */
+  stroke-linecap: round; /* abgerundete Enden */
+  transition: stroke-dashoffset 0.4s ease, stroke 0.3s ease; /* weiche Animation bei Änderungen */
+}
+
+/* Ring wird gelb bei hohem Füllstand */
+.tx-ring-prog.tx-warn {
+  stroke: #d99a3b; /* Warnfarbe */
+}
+
+/* Ring wird rot bei kritischem Füllstand */
+.tx-ring-prog.tx-crit {
+  stroke: #e5584f; /* kritische Farbe */
+}
+
+/* Detail-Panel (die genaue Ansicht) */
+.tx-panel {
+  position: fixed; /* hängt am Fenster, nicht am Seiteninhalt */
+  z-index: 2147483001; /* liegt noch über dem Ring-Container */
+  transform: translateX(-100%); /* rechte Kante am Ring ausrichten */
+  box-sizing: border-box; /* Padding zählt zur Breite dazu */
+  width: 340px; /* feste Kartenbreite wie im Vorbild */
+  max-width: calc(100vw - 24px); /* passt sich schmalen Fenstern an */
+  max-height: calc(100vh - 120px); /* Panel bleibt innerhalb des Fensters */
+  overflow-y: auto; /* scrollt, wenn die Aufschlüsselung lang wird */
+  padding: 14px 16px; /* Innenabstand der Karte */
+  background: var(--tx-surface); /* an die Oberfläche der KI-Eingabe angepasst */
+  color: var(--tx-foreground); /* passt den Kontrast an helle und dunkle Oberflächen an */
+  border: 1px solid color-mix(in srgb, var(--tx-foreground) 18%, var(--tx-surface)); /* feine Umrandung */
+  border-radius: 12px; /* abgerundete Ecken */
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45); /* weicher Schatten für Tiefe */
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; /* gleiche Schrift wie das Label */
+  font-size: 12px; /* kompakte Schriftgröße */
+  font-weight: 400; /* normales Gewicht, Titel setzen sich selbst fett ab */
+  line-height: 1.35; /* gut lesbarer Zeilenabstand */
+}
+
+/* Kopfzeile einer Gruppe: Titel links, Wert rechts */
+.tx-head {
+  display: flex; /* Titel und Wert nebeneinander */
+  justify-content: space-between; /* Titel links, Wert ganz rechts */
+  align-items: baseline; /* gemeinsame Schriftlinie */
+  gap: 12px; /* Mindestabstand zwischen Titel und Wert */
+  margin-bottom: 6px; /* Luft zum Balken darunter */
+}
+
+/* Titel einer Zeile, z. B. "Kontextfenster" */
+.tx-title {
+  color: var(--tx-foreground); /* volle Textfarbe, damit der Titel heraussticht */
+  font-weight: 600; /* leicht fett */
+}
+
+/* Wert rechts, z. B. "~265,5k / 1M (27 %)" */
+.tx-val {
+  color: color-mix(in srgb, var(--tx-foreground) 72%, var(--tx-surface)); /* etwas gedämpfter als der Titel */
+  font-variant-numeric: tabular-nums; /* gleich breite Ziffern */
+  white-space: nowrap; /* Wert bleibt in einer Zeile */
+}
+
+/* Balken-Hintergrund */
+.tx-bar {
+  height: 6px; /* Dicke des Balkens */
+  background: color-mix(in srgb, var(--tx-foreground) 14%, var(--tx-surface)); /* abgesetzte Spur */
+  border-radius: 999px; /* vollständig abgerundet */
+  overflow: hidden; /* Füllung bleibt innerhalb der Rundung */
+}
+
+/* Balken-Füllung */
+.tx-bar-fill {
+  height: 100%; /* füllt die Balkenhöhe aus */
+  border-radius: 999px; /* abgerundetes Ende */
+  background: #4b8bf5; /* Standardfarbe Blau */
+  transition: width 0.4s ease, background 0.3s ease; /* weiche Animation */
+}
+
+/* Füllung bei hohem Verbrauch */
+.tx-bar-fill.tx-warn {
+  background: #d99a3b; /* Warnfarbe */
+}
+
+/* Füllung bei kritischem Verbrauch */
+.tx-bar-fill.tx-crit {
+  background: #e5584f; /* kritische Farbe */
+}
+
+/* Kleine Nebenzeile unter Balken, z. B. Reset-Zeit */
+.tx-sub {
+  margin-top: 6px; /* Abstand zum Balken darüber */
+  color: color-mix(in srgb, var(--tx-foreground) 58%, var(--tx-surface)); /* deutlich gedämpft, da Nebeninfo */
+  font-size: 11px; /* kleiner als der Haupttext */
+}
+
+/* Trennlinie zwischen Bereichen */
+.tx-sep {
+  height: 1px; /* hauchdünne Linie */
+  margin: 12px 0; /* Abstand nach oben und unten */
+  background: color-mix(in srgb, var(--tx-foreground) 18%, var(--tx-surface)); /* gleiche Farbe wie der Kartenrand */
+}
+
+/* Abschnittsüberschrift, z. B. "Nutzungslimits des Plans" */
+.tx-section {
+  margin: 8px 0 8px; /* Abstand um die Überschrift */
+  color: color-mix(in srgb, var(--tx-foreground) 62%, var(--tx-surface)); /* gedämpft, aber lesbar */
+  font-size: 11px; /* klein */
+}
+
+/* Zeile je Nutzungslimit */
+.tx-row {
+  margin-bottom: 12px; /* Abstand zur nächsten Limit-Zeile */
+}
+
+/* Hinweiszeile zur letzten Kalibrierung */
+.tx-notice {
+  margin-top: 4px; /* kleiner Abstand nach oben */
+  padding: 6px 8px; /* Innenabstand der Hinweisbox */
+  background: rgba(75, 139, 245, 0.12); /* zartes blaues Feld */
+  color: color-mix(in srgb, #4b8bf5 55%, var(--tx-foreground)); /* bläulicher Text, auf hellen und dunklen Flächen lesbar (vorher festes Hellblau) */
+  border-radius: 6px; /* leicht abgerundete Ecken */
+  font-size: 11px; /* klein */
+}
+
+/* Link-ähnlicher Knopf "Detaillierte Aufschlüsselung anzeigen" */
+.tx-link {
+  display: block; /* eigene Zeile */
+  width: 100%; /* über die ganze Kartenbreite klickbar */
+  padding: 2px 0; /* kleiner vertikaler Klickbereich */
+  border: none; /* keine Umrandung */
+  background: transparent; /* kein Hintergrund */
+  color: color-mix(in srgb, var(--tx-foreground) 72%, var(--tx-surface)); /* gedämpft, wird beim Überfahren voll */
+  font: inherit; /* übernimmt Schrift der Karte */
+  text-align: left; /* linksbündig wie im Vorbild */
+  text-decoration: underline; /* Unterstreichung als Link-Hinweis */
+  text-underline-offset: 3px; /* Abstand der Unterstreichung zum Text */
+  cursor: pointer; /* zeigt die Klickbarkeit an */
+}
+
+/* Link beim Überfahren */
+.tx-link:hover {
+  color: var(--tx-foreground); /* wird beim Überfahren hervorgehoben */
+}
+
+/* Bereich der aufgeklappten Aufschlüsselung */
+.tx-detail {
+  margin-top: 10px; /* Abstand zum Link darüber */
+}
+
+/* Zeile "Name … Wert" in der Aufschlüsselung */
+.tx-line {
+  display: flex; /* Name links, Wert rechts */
+  justify-content: space-between; /* maximaler Abstand dazwischen */
+  gap: 12px; /* Mindestabstand */
+  padding: 3px 0; /* vertikale Luft pro Zeile */
+}
+
+/* Name in der Aufschlüsselung */
+.tx-line-k {
+  color: color-mix(in srgb, var(--tx-foreground) 62%, var(--tx-surface)); /* gedämpft, der Wert soll auffallen */
+}
+
+/* Wert in der Aufschlüsselung */
+.tx-line-v {
+  color: var(--tx-foreground); /* kontrastierender Wert */
+  font-variant-numeric: tabular-nums; /* gleich breite Ziffern */
+}
+
+/* Mini-Diagramm der letzten Turns */
+.tx-spark {
+  display: flex; /* Balken nebeneinander */
+  align-items: flex-end; /* Balken wachsen von unten */
+  gap: 4px; /* Abstand zwischen den Balken */
+  height: 36px; /* Gesamthöhe des Diagramms */
+  margin-bottom: 8px; /* Abstand zum Text darunter */
+}
+
+/* Einzelner Balken im Mini-Diagramm */
+.tx-spark-bar {
+  flex: 1; /* alle Balken gleich breit */
+  background: #4b8bf5; /* Blau wie der Ring */
+  border-radius: 3px 3px 0 0; /* nur oben abgerundet */
+  min-height: 3px; /* auch kleine Werte bleiben sichtbar */
+}
+
+/* Zeile mit den Aktionsknöpfen */
+.tx-actions {
+  display: flex; /* Knöpfe nebeneinander */
+  flex-wrap: wrap; /* bricht bei Platzmangel um */
+  gap: 6px; /* Abstand zwischen Knöpfen */
+  margin-top: 10px; /* Abstand zum Inhalt darüber */
+}
+
+/* Aktionsknopf (Export, Zurücksetzen) */
+.tx-btn {
+  padding: 5px 9px; /* Innenabstand des Knopfs */
+  border: 1px solid color-mix(in srgb, var(--tx-foreground) 22%, var(--tx-surface)); /* feine Umrandung */
+  border-radius: 6px; /* leicht abgerundet */
+  background: color-mix(in srgb, var(--tx-foreground) 9%, var(--tx-surface)); /* leicht abgesetzte Schaltfläche */
+  color: var(--tx-foreground); /* kontrastierender Text */
+  font: inherit; /* übernimmt Schrift der Karte */
+  font-size: 11px; /* kleine Schrift, überschreibt die Größe aus "font: inherit" */
+  cursor: pointer; /* zeigt die Klickbarkeit an */
+}
+
+/* Aktionsknopf beim Überfahren */
+.tx-btn:hover {
+  background: color-mix(in srgb, var(--tx-foreground) 16%, var(--tx-surface)); /* wird beim Überfahren hervorgehoben */
+}

@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "Token Extension",
+  "version": "0.1.0",
+  "description": "Zeigt Kontext-Füllstand und Nutzungslimits in Claude, ChatGPT und Gemini – so genau wie möglich, mit Selbstkalibrierung.",
+  "permissions": ["storage"],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://claude.ai/*",
+        "https://chatgpt.com/*",
+        "https://chat.openai.com/*",
+        "https://gemini.google.com/*"
+      ],
+      "js": ["plans.js", "context-model.js", "content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Token Extension"
+  }
+}

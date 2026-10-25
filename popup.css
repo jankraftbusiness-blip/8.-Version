@@ -1,0 +1,88 @@
+/*
+ * popup.css – Optik des Einstellungs-Popups.
+ * Jede Eigenschaft ist kommentiert.
+ */
+
+/* Grundlayout der Popup-Seite */
+body {
+  width: 320px; /* feste Popup-Breite */
+  margin: 0; /* kein Standardrand des Browsers */
+  padding: 14px 16px; /* Innenabstand rundherum */
+  background: #262624; /* dunkler Hintergrund passend zum Panel */
+  color: #e8e6e0; /* heller Text */
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; /* Systemschrift */
+  font-size: 12px; /* kompakte Schrift */
+}
+
+/* Überschrift */
+h1 {
+  margin: 0 0 6px; /* kleiner Abstand nach unten */
+  font-size: 15px; /* etwas größer als der Fließtext */
+}
+
+/* Hinweistexte */
+.hint {
+  margin: 0 0 12px; /* Abstand nach unten */
+  color: #8f8c84; /* gedämpftes Grau */
+  font-size: 11px; /* klein */
+}
+
+/* Block je Anbieter */
+fieldset {
+  margin: 0 0 10px; /* Abstand zum nächsten Block */
+  padding: 8px 10px 10px; /* Innenabstand des Blocks */
+  border: 1px solid #3d3d3a; /* feine Umrandung */
+  border-radius: 8px; /* abgerundete Ecken */
+}
+
+/* Anbietername im Rahmen */
+legend {
+  padding: 0 6px; /* Luft links und rechts vom Namen */
+  font-weight: 600; /* leicht fett */
+}
+
+/* Beschriftung mit Eingabefeld */
+label {
+  display: flex; /* Text links, Feld rechts */
+  justify-content: space-between; /* maximaler Abstand dazwischen */
+  align-items: center; /* vertikal mittig */
+  gap: 10px; /* Mindestabstand */
+  margin-top: 6px; /* Abstand zur Zeile darüber */
+  color: #b9b6ad; /* gedämpfter Beschriftungstext */
+}
+
+/* Eingabefelder und Auswahl */
+input,
+select {
+  width: 140px; /* einheitliche Feldbreite */
+  padding: 4px 6px; /* Innenabstand im Feld */
+  border: 1px solid #4a4a46; /* feine Umrandung */
+  border-radius: 6px; /* leicht abgerundet */
+  background: #30302d; /* etwas heller als der Hintergrund */
+  color: #e8e6e0; /* heller Text */
+  font: inherit; /* übernimmt die Schrift */
+}
+
+/* Zeile mit den Knöpfen unten */
+.actions {
+  display: flex; /* Knöpfe nebeneinander */
+  gap: 6px; /* Abstand dazwischen */
+  margin-top: 4px; /* kleiner Abstand nach oben */
+}
+
+/* Knöpfe */
+button {
+  flex: 1; /* beide Knöpfe gleich breit */
+  padding: 6px 8px; /* Innenabstand */
+  border: 1px solid #4a4a46; /* feine Umrandung */
+  border-radius: 6px; /* leicht abgerundet */
+  background: #30302d; /* etwas heller als der Hintergrund */
+  color: #e8e6e0; /* heller Text */
+  font: inherit; /* übernimmt die Schrift */
+  cursor: pointer; /* zeigt die Klickbarkeit an */
+}
+
+/* Knopf beim Überfahren */
+button:hover {
+  background: #3a3a36; /* wird beim Überfahren heller */
+}
